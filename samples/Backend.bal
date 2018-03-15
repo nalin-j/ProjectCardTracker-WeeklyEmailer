@@ -14,17 +14,21 @@ public function main (string[] args) {
     json allCards = src:getData();
     json personalMailList;
     json groupToPMC;
+    json summeryToPMC;
     sql:Parameter[][] filteredCards;
     filteredCards = filterCards(allCards,thresholdDays);
     src:updateDB(filteredCards);
     personalMailList = src:todayMailList(params);
     groupToPMC = src:allCardList();
+    summeryToPMC = src:projectSummery();
+    json summeryMail = src:createSummeryEmail(summeryToPMC);
     json individualMail = src:createUserEmail(personalMailList);
     json PMCMail = src:pmcEmail(groupToPMC);
     string Token;
     Token,_=src:generateAccessToken();
     src:sendUserEmail(individualMail,Token);
-    src:sendPMCEmail(PMCMail,Token);
+    src:sendPMCEmail(summeryMail,Token);
+
 }
 
 
@@ -53,7 +57,7 @@ function filterCards(json allCards, int threshold)(sql:Parameter[][]){
         }
         else {
             foreach column in project.columns.nodes {
-                if (lengthof column.cards.nodes == 0) {
+                if (lengthof column.cards.nodes == 0 || column.name.toString()=="Done") {
                     next;
                 }
                 else {
@@ -66,7 +70,7 @@ function filterCards(json allCards, int threshold)(sql:Parameter[][]){
                         else if (card.content.state.toString()=="OPEN"){
                             issueOPEN=true;
                         }
-                        if(gap>=threshold && issueOPEN ){
+                        if(gap>=threshold && issueOPEN){
                             params = [];
                             projectName = {sqlType:sql:Type.VARCHAR, value:project.name};
                             columnName = {sqlType:sql:Type.VARCHAR, value:column.name};

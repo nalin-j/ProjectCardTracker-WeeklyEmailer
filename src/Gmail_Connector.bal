@@ -46,7 +46,7 @@ public function sendUserEmail(json mailDetails, string token){
     int count=0;
     string sender = "nalin.j@outlook.com";
     foreach user in mailDetails {
-        if (count==2){
+        if (count==0){
             sendMail(token,sender,"2njayworks@gmail.com","Individual E-mail", user.body.toString());
             log:printInfo("Notificatiom mail sent to "+sender);
         }

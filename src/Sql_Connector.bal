@@ -53,6 +53,21 @@ public function todayMailList(sql:Parameter[] threshold)(json){
     }
     table dataTable = projectCardsDB.select(QUERY_TODAY, threshold, typeof MailList);
     var jsonRes, _ = <json>dataTable;
+    io:println(jsonRes);
+    projectCardsDB.close();
+    return jsonRes;
+}
+
+public function projectSummery()(json){
+    endpoint<sql:ClientConnector> projectCardsDB {
+        create sql:ClientConnector(sql:DB.MYSQL, config:getGlobalValue("Conf_SqlServer"),
+                                   PORT, CERTIFICATE_CHECK, config:getGlobalValue("Conf_sqlUser"),
+                                   config:getGlobalValue("Conf_SqlPassword"), {maximumPoolSize:POOL_SIZE });
+    }
+    table dataTable = projectCardsDB.select("SELECT PROJECT, COUNT(*) AS COUNT FROM filteredCards GROUP BY PROJECT", null, null);
+    var jsonRes, _ = <json>dataTable;
+    io:println(jsonRes);
+    projectCardsDB.close();
     return jsonRes;
 }
 
@@ -66,6 +81,8 @@ public function allCardList()(json){
     }
     table dataTable = projectCardsDB.select(QUERY_LIST, null, typeof MailList);
     var jsonRes, _ = <json>dataTable;
+    io:println(jsonRes);
+    projectCardsDB.close();
     return jsonRes;
 }
 
@@ -79,6 +96,24 @@ public function dataToDashboard()(json){
     }
     table dt = projectCardsDB.select(QUERY_DASHBOARD, null, null);
     var jsonRes, _ = <json>dt;
+    io:println(jsonRes);
+    projectCardsDB.close();
+    return jsonRes;
+}
+
+public function dataToDashboardFiltered(string project)(json){
+    endpoint<sql:ClientConnector> projectCardsDB {
+        create sql:ClientConnector(sql:DB.MYSQL, config:getGlobalValue("Conf_SqlServer"),
+                                   PORT, CERTIFICATE_CHECK, config:getGlobalValue("Conf_sqlUser"),
+                                   config:getGlobalValue("Conf_SqlPassword"), {maximumPoolSize:POOL_SIZE });
+    }
+    sql:Parameter[] params = [];
+    sql:Parameter param = {sqlType:sql:Type.VARCHAR, value:project};
+    params = [param];
+    table dt = projectCardsDB.select(QUERY_DASHBOARD_FILTERED, params, null);
+    var jsonRes, _ = <json>dt;
+    io:println(jsonRes);
+    projectCardsDB.close();
     return jsonRes;
 }
 
@@ -90,5 +125,7 @@ public function mapEmailAddress (sql:Parameter[] githubID) (json ) {
     }
     table dt = projectCardsDB.select("SELECT WSO2MAIL FROM mailTable WHERE GITID = ?", githubID, null);
     var jsonRes, _ = <json>dt;
+    io:println(jsonRes);
+    projectCardsDB.close();
     return jsonRes;
 }

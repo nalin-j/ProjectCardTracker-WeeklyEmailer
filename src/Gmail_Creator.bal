@@ -3,6 +3,7 @@ package src;
 import ballerina.data.sql;
 import ballerina.time;
 import ballerina.log;
+import ballerina.config;
 
 @Description {value:"Map Email address and body requared for Individual Emails"}
 @Param {value:"project card details"}
@@ -433,3 +434,222 @@ public function pmcEmail(json groupList)(json){
     json mail={addr:"nalin.j@outlook.com",body:body};
     return (mail);
 }
+
+public function createSummeryEmail(json projectList)(json){
+    int counter=1;
+    string colour;
+    time:Time time = time:currentTime();
+    int year=time.year();
+    int month=time.month();
+    int day=time.day();
+    string date= year + ":" + month + ":" + day;
+    string body = "<html>" +
+                  "<head>" +
+                  "<title></title>" +
+                  "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" +
+                  "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">" +
+                  "<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />" +
+                  "<style type=\"text/css\">" +
+                  "/* CLIENT-SPECIFIC STYLES */" +
+                  "body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }" +
+                  "table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }" +
+                  "img { -ms-interpolation-mode: bicubic; }" +
+                  "/* RESET STYLES */" +
+                  "img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }" +
+                  "table { border-collapse: collapse !important; }" +
+                  "body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; }" +
+                  "/* iOS BLUE LINKS */" +
+                  "a[x-apple-data-detectors] {" +
+                  "    color: inherit !important;" +
+                  "    text-decoration: none !important;" +
+                  "    font-size: inherit !important;" +
+                  "    font-family: inherit !important;" +
+                  "    font-weight: inherit !important;" +
+                  "    line-height: inherit !important;" +
+                  "}" +
+                  "/* MEDIA QUERIES */" +
+                  "@media screen and (max-width: 480px) {" +
+                  "    .mobile-hide {" +
+                  "        display: none !important;" +
+                  "    }" +
+                  "    .mobile-center {" +
+                  "        text-align: center !important;" +
+                  "    }" +
+                  "}" +
+                  "/* ANDROID CENTER FIX */" +
+                  "div[style*=\"margin: 16px 0;\"] { margin: 0 !important; }" +
+                  "</style>" +
+                  "<body style=\"margin: 0 !important; padding: 0 !important; background-color: #eeeeee;\" bgcolor=\"#eeeeee\">" +
+                  "<!-- HIDDEN PREHEADER TEXT -->" +
+                  "<div style=\"display: none; font-size: 1px; color: #fefefe; line-height: 1px; font-family: Open Sans, Helvetica, Arial, sans-serif; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden;\">" +
+                  "</div>" +
+                  "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">" +
+                  "    <tr>" +
+                  "        <td align=\"center\" style=\"background-color: #eeeeee;\" bgcolor=\"#eeeeee\">" +
+                  "        <!--[if (gte mso 9)|(IE)]>" +
+                  "        <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"600\">" +
+                  "        <tr>" +
+                  "        <td align=\"center\" valign=\"top\" width=\"600\">" +
+                  "        <![endif]-->" +
+                  "        <table align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">" +
+                  "            <tr>" +
+                  "                <td align=\"center\" valign=\"top\" style=\"font-size:0; padding: 35px;\" bgcolor=\"#044767\">" +
+                  "                <!--[if (gte mso 9)|(IE)]>" +
+                  "                <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"600\">" +
+                  "                <tr>" +
+                  "                <td align=\"left\" valign=\"top\" width=\"300\">" +
+                  "                <![endif]-->" +
+                  "                <div style=\"display:inline-block; max-width:50%; min-width:100px; vertical-align:top; width:100%;\">" +
+                  "                    <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">" +
+                  "                        <tr>" +
+                  "                            <td align=\"left\" valign=\"top\" style=\"font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 36px; font-weight: 800; line-height: 48px;\" class=\"mobile-center\">" +
+                  "                                <h1 style=\"font-size: 36px; font-weight: 800; margin: 0; color: #ffffff;\">Github Project Card Tracker</h1>" +
+                  "                            </td>" +
+                  "                        </tr>" +
+                  "                    </table>" +
+                  "                </div>" +
+                  "                <!--[if (gte mso 9)|(IE)]>" +
+                  "                </td>" +
+                  "                <td align=\"right\" width=\"300\">" +
+                  "                <![endif]-->" +
+                  "                <div style=\"display:inline-block; max-width:50%; min-width:100px; vertical-align:top; width:100%;\" class=\"mobile-hide\">" +
+                  "                    <table align=\"right\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"max-width:30px;\">" +
+                  "                        <tr>" +
+                  "                            <td valign=\"top\" style=\"font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;\">" +
+                  "                                 <a target=\"_blank\" style=\"color: #ffffff; text-decoration: none;\"><img src=\"https://cdn-images-1.medium.com/max/1600/1*Hp_mwS4K0msofoCyc0m33g.png\" width=\"140\" style=\"display: block; border: 0px;\"/></a>" +
+                  "                            </td>" +
+                  "                        </tr>" +
+                  "                    </table>" +
+                  "                </div>" +
+                  "                <!--[if (gte mso 9)|(IE)]>" +
+                  "                </td>" +
+                  "                </tr>" +
+                  "                </table>" +
+                  "                <![endif]-->" +
+                  "                </td>" +
+                  "            </tr>" +
+                  "            <tr>" +
+                  "                <td align=\"center\" style=\"padding: 35px 35px 20px 35px; background-color: #ffffff;\" bgcolor=\"#ffffff\">" +
+                  "                <!--[if (gte mso 9)|(IE)]>" +
+                  "                <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"600\">" +
+                  "                <tr>" +
+                  "                <td align=\"center\" valign=\"top\" width=\"600\">" +
+                  "                <![endif]-->" +
+                  "                <table align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"60%\" style=\"max-width:100%;\">" +
+                  "                    <tr>" +
+                  "                        <td align=\"center\" style=\"font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding-top: 25px;\">" +
+                  "                            " +
+                  "                            <h2 style=\"font-size: 30px; font-weight: 800; line-height: 36px; color: #333333; margin: 0;\">" +
+                  "                                Github Project Card Summary" +
+                  "                            <h1 style=\"font-size: 20px; font-weight: 200; line-height: 20px; color: #333333; margin: 0;\">" +
+                  date +
+                  "                            <h1 style=\"font-size: 20px; font-weight: 200; line-height: 20px; color: #999999; margin: 10;\">" +
+                  "                                Threshold : " + config:getGlobalValue("conf_threshold") +
+                  "                    </tr>" +
+                  "                    <tr>" +
+                  "                        <td align=\"left\" style=\"padding-top: 20px;\">" +
+                  "			" +
+                  "                            <table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" margin-left=\"100px\" align=\"center\" >" +
+                  "                                <tr>" +
+                  "                                    " +
+                  "                                    <td  width=\"20%\"align=\"left\" bgcolor=\"#cccccc\" style=\"font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px;\">" +
+                  "                                        Project" +
+                  "                                    </td>" +
+                  "									<td width=\"15%\"align=\"left\" bgcolor=\"#eeeeee\" style=\"font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px;\">" +
+                  "                                        Number of non moving cards" +
+                  "                                    </td>" +
+                  "									<td  width=\"10%\"align=\"center\" bgcolor=\"#eeeeee\" style=\"font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px;\">" +
+                  "                                        Go to Dashboard" +
+                  "                                    </td>" +
+                  "									" +
+                  "                                </tr>";
+    foreach project in projectList {
+        if (counter%2==0){
+            colour="#eeeeee";
+        }
+        else{
+            colour="#ffffff";
+        }
+        body=body+ "                                <tr>" +
+             "                                    <td width=\"20%\" align=\"left\" bgcolor=\""+colour+"\" style=\"font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 600; line-height: 24px; padding: 5px 10px 5px 10px;\">" +
+             project.PROJECT.toString() +
+             "                                    </td>" +
+             "                                    <td width=\"15%\" align=\"left\" bgcolor=\""+colour+"\" style=\"font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px 5px 10px;\">" +
+             project.COUNT.toString() +
+             "                                    </td>" +
+             "									<td width=\"10%\" align=\"center\" bgcolor=\""+colour+"\" style=\"font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px 5px 10px;\"><!-- Button : BEGIN --><center>" +
+             "<table role=\"presentation\" class=\"center-on-narrow\" style=\"text-align: center;\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" align=\"center\">" +
+             "<tbody>" +
+             "<tr>" +
+             "<td style=\"border-radius: 10px; background: #26a4d3; text-align: center;\" class=\"button-td\"><a href=\""+DASHBOARD_URL+"?"+project.PROJECT.toString()+"\" style=\"background: #26a4d3; border: 10px solid #26a4d3; font-family: 'Montserrat', sans-serif; font-size: 14px; line-height: 1.1; text-align: center; text-decoration: none; display: block; border-radius: 50px; font-weight: bold;\" class=\"button-a\"> <span style=\"color: #ffffff;\" class=\"button-link\">&nbsp;&nbsp;&nbsp;&nbsp;Apply Filter&nbsp;&nbsp;&nbsp;&nbsp;</span> </a></td>" +
+             "</tr>" +
+             "</tbody>" +
+             "</table>" +
+             "										</center><!-- Button : END --></td>" +
+             "                                </tr>";
+        counter=counter+1;
+    }
+    body=body+"                                " +
+         "                            </table>" +
+         "                        </td>" +
+         "                    </tr>" +
+         "                   " +
+         "                </table>" +
+         "                <!--[if (gte mso 9)|(IE)]>" +
+         "                </td>" +
+         "                </tr>" +
+         "                </table>" +
+         "                <![endif]-->" +
+         "                </td>" +
+         "            </tr>" +
+         "             <tr>" +
+         "                <td align=\"center\" height=\"100%\" valign=\"top\" width=\"100%\" style=\"padding: 0 35px 35px 35px; background-color: #ffffff;\" bgcolor=\"#ffffff\">" +
+         "                </td>" +
+         "            </tr>" +
+         "            <tr>" +
+         "                <td align=\"center\" style=\" padding: 35px; background-color: #1b9ba3;\" bgcolor=\"#1b9ba3\">" +
+         "                <!--[if (gte mso 9)|(IE)]>" +
+         "                <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"600\">" +
+         "                <tr>" +
+         "                <td align=\"center\" valign=\"top\" width=\"600\">" +
+         "                <![endif]-->" +
+         "                <table align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"max-width:600px;\">" +
+         "                    <tr>" +
+         "                        <td align=\"center\" style=\"font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding-top: 25px;\">" +
+         "                            <h2 style=\"font-size: 24px; font-weight: 800; line-height: 30px; color: #ffffff; margin: 0;\">" +
+         "                                All the above Github project cards are not updated recently." +
+         "                            </h2>" +
+         "                        </td>" +
+         "                    </tr>" +
+         "                    " +
+         "                </table>" +
+         "                <!--[if (gte mso 9)|(IE)]>" +
+         "                </td>" +
+         "                </tr>" +
+         "                </table>" +
+         "                <![endif]-->" +
+         "                </td>" +
+         "            </tr>" +
+         "        </table>" +
+         "        <!--[if (gte mso 9)|(IE)]>" +
+         "        </td>" +
+         "        </tr>" +
+         "        </table>" +
+         "        <![endif]-->" +
+         "        </td>" +
+         "    </tr>" +
+         "</table>" +
+         "    " +
+         "</body>" +
+         "</html>";
+    json mail={addr:"nalin.j@outlook.com",body:body};
+    return (mail);
+}
+
+
+
+
+
+
+
+
