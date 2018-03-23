@@ -1,9 +1,28 @@
+//
+// Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+//
+// WSO2 Inc. licenses this file to you under the Apache License,
+// Version 2.0 (the "License"); you may not use this file except
+// in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+//
+
 package src;
 
 import ballerina.net.http;
 import ballerina.config;
 import ballerina.log;
 import ballerina.util;
+import ballerina.io;
 
 
 string refresh_token = config:getGlobalValue("conf_Gmailrefresh_token");
@@ -14,7 +33,7 @@ string client_secret = config:getGlobalValue("conf_Gmailclient_secret");
 @Return {value:"New Access token and error"}
 public function generateAccessToken () (string, error) {
     endpoint<http:HttpClient> gmailTokenEP {
-        create http:HttpClient(ENDPOINT,{});
+        create http:HttpClient(ENDPOINT, {});
     }
     http:OutRequest request = {};
     http:InResponse response = {};
@@ -42,24 +61,24 @@ public function generateAccessToken () (string, error) {
 @Description {value:"Send individual emails to users"}
 @Param {value:"Email adress and corresponding Mail body"}
 @Param {value:"Access token for Gmail"}
-public function sendUserEmail(json mailDetails, string token){
-    int count=0;
+public function sendUserEmail (json mailDetails, string token) {
+    int count = 0;
     string sender = "nalin.j@outlook.com";
     foreach user in mailDetails {
-        if (count==0){
-            sendMail(token,sender,"2njayworks@gmail.com","Individual E-mail", user.body.toString());
-            log:printInfo("Notificatiom mail sent to "+sender);
-        }
-        count=count+1;
-        
+        io:println(user.addr.toString());
+        sendMail(token, sender, "2njayworks@gmail.com", "Individual E-mail", user.body.toString());
+        log:printInfo("Notificatiom mail sent to " + sender);
+        count = count + 1;
+
     }
 }
 
 @Description {value:"Send Email to PMC Group"}
 @Param {value:"Email address and corresponding Email body"}
 @Param {value:"Access token for Gmail"}
-public function sendPMCEmail (json mailDetails, string token)  {
-    sendMail(token,mailDetails.addr.toString(),"2njayworks@gmail.com","Summary E-mail-test", mailDetails.body.toString());
+public function sendPMCEmail (json mailDetails, string token) {
+
+    sendMail(token, mailDetails.addr.toString(), "2njayworks@gmail.com", "Summary E-mail-test", mailDetails.body.toString());
 }
 
 @Description {value:"Send Mail request"}
@@ -68,33 +87,33 @@ public function sendPMCEmail (json mailDetails, string token)  {
 @Param {value:"Sender"}
 @Param {value:"Subject"}
 @Param {value:"Email content"}
-public function sendMail(string accessToken, string to,string from,string subject, string message){
+public function sendMail (string accessToken, string to, string from, string subject, string message) {
 
     endpoint<http:HttpClient> httpEndpoint {
-        create http:HttpClient(GOOGLE_APIS,{});
+        create http:HttpClient(GOOGLE_APIS, {});
     }
 
     http:OutRequest request = {};
     http:InResponse response = {};
     string buildRequest = "";
 
-    buildRequest = buildRequest + "to:" + to+ "\n";
+    buildRequest = buildRequest + "to:" + to + "\n";
     buildRequest = buildRequest + "subject:" + subject + "\n";
     buildRequest = buildRequest + "from:" + from + "\n";
     buildRequest = buildRequest + "content-type:" + "text/html;charset=iso-8859-1" + "\n";
     buildRequest = buildRequest + "\n" + message + "\n";
 
     string encodedRequest = util:base64Encode(buildRequest);
-    encodedRequest=encodedRequest.replace("+", "-");
-    encodedRequest=encodedRequest.replace("/", "_");
+    encodedRequest = encodedRequest.replace("+", "-");
+    encodedRequest = encodedRequest.replace("/", "_");
 
     json sendMailRequest = {"raw":encodedRequest};
     string sendMailPath = "/v1/users/me/messages/send";
-
     request.setHeader("Authorization", "Bearer " + accessToken);
     request.setHeader("Content-Type", "application/json");
+
     request.setJsonPayload(sendMailRequest);
     http:HttpConnectorError er;
-    response,er = httpEndpoint.post(sendMailPath, request);
+    response, er = httpEndpoint.post(sendMailPath, request);
     json result = response.getJsonPayload();
 }
