@@ -24,6 +24,8 @@ import ballerina.time;
 import src;
 import ballerina.log;
 import ballerina.io;
+import logFile;
+import ballerina.runtime;
 
 public function main (string[] args) {
     var thresholdDays, _ = <int>config:getGlobalValue("conf_threshold");
@@ -34,7 +36,7 @@ public function main (string[] args) {
     error err;
     var allCards,err= src:getData();
     if (err!=null){
-        log:printError(err.message);
+        logFile:logError(err.message,runtime:getCallStack()[1].packageName);
         return;
     }
 
@@ -47,21 +49,20 @@ public function main (string[] args) {
     error sqlError;
     sqlError=src:updateDB(filteredCards);
     if (sqlError!=null){
-        log:printError(sqlError.message);
+        logFile:logError(err.message,runtime:getCallStack()[1].packageName);
         return;
     }
 
     //card details of user who should acknowledge within today
     personalMailList, sqlError = src:todayMailList(params);
-    io:println(sqlError);
     if (sqlError!=null){
-        log:printError(sqlError.message);
+        logFile:logError(err.message,runtime:getCallStack()[1].packageName);
         return;
     }
     //summary of the cards which should forward to PMC group
     summeryToPMC, sqlError = src:projectSummery();
     if (sqlError != null) {
-        log:printError(sqlError.message);
+        logFile:logError(err.message,runtime:getCallStack()[1].packageName);
         return;
     }
     //create Email content using summary
@@ -75,12 +76,12 @@ public function main (string[] args) {
     Token, tokenError = src:generateAccessToken();
     if (tokenError == null) {
         //send set of user Emails
-        src:sendUserEmail(individualMail, Token);
+       // src:sendUserEmail(individualMail, Token);
         //send summary Email to PMC group
         src:sendPMCEmail(summeryMail, Token);
     }
     else {
-        log:printError("Error in Gmail access token");
+        logFile:logError("Error in Gmail access token",runtime:getCallStack()[1].packageName);
         return;
     }
 

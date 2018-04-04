@@ -22,6 +22,8 @@ import ballerina.data.sql;
 import ballerina.log;
 import ballerina.config;
 import ballerina.io;
+import logFile;
+import ballerina.runtime;
 
 
 public struct mailList {
@@ -93,7 +95,8 @@ public function todayMailList (sql:Parameter[] threshold) (mailList[], error) {
     mailList[] outRes = [];
     error conversionError = null;
     try {
-        table dataTable = projectCardsDB.select(QUERY_TODAY, threshold, typeof mailList);
+        string query = QUERY_TODAY.replace("?",config:getGlobalValue("conf_threshold"));
+        table dataTable = projectCardsDB.select(query, null, typeof mailList);
         var jsonRes, conversionError = <json>dataTable;
         if (conversionError != null) {
             projectCardsDB.close();
@@ -171,7 +174,7 @@ public function dataToDashboard () (json, error) {
 
         }
         if (jsonRes[0].PROJECT != null) {
-            log:printInfo("Data sent to Dashboard Sucsessfully");
+            logFile:logError("Data sent to Dashboard Sucsessfully",runtime:getCallStack()[1].packageName);
         }
     }
     catch(error e){
@@ -202,7 +205,7 @@ public function dataToDashboardFiltered (string project) (json,error) {
 
     }
         if (jsonRes[0].PROJECT != null) {
-            log:printInfo("Filterd Data sent to Dashboard Sucsessfully");
+            logFile:logError("Data sent to Dashboard Sucsessfully",runtime:getCallStack()[1].packageName);
         }
     }
     catch (error e) {

@@ -20,23 +20,27 @@ import ballerina.net.http;
 import ballerina.config;
 import src;
 import ballerina.log;
+import logFile;
+import ballerina.runtime;
 
 
+@http:configuration {port:9094}
 service<http> githubProjectCardTracker {
     @Description {value:"set all the data required for dashboard table"}
+
     resource dashboard (http:Connection conn, http:InRequest req) {
         http:OutResponse res = {};
         var threshold, _ = <int>config:getGlobalValue("conf_threshold");
         json dataToUI;
         var params = req.getQueryParams();
         int count;
-        var project, _ = (string)params["pRojEct"];
+        var project, _ = (string)params["project"];
         error err;
         if (project == "null" || project == null) {
 
             dataToUI,err = src:dataToDashboard();
             if(err!=null){
-                log:printError(err.message);
+                logFile:logError(err.message,runtime:getCallStack()[1].packageName);
                 return;
             }
             count = (lengthof dataToUI);
@@ -50,5 +54,4 @@ service<http> githubProjectCardTracker {
         res.setJsonPayload(result);
         _ = conn.respond(res);
     }
-
 }
